@@ -1,29 +1,38 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function POSTS() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    const post = {
-      title: "Post1",
-      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nisi turpis, ultrices in tristique eget, faucibus ut dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-      id: 1
-    };
-    setData([post])
+    fetchPosts();
   }, [])
 
   function postAddHandle(event) {
     event.preventDefault();
     const title = event.target.elements.title.value;
     const body = event.target.elements.body.value;
+    const recentId = data[data.length-1]['id']
+    console.log(data[data.length-1]['id'])
     const post = {
       title: title,
       body: body,
-      id: 2
+      id: recentId + 1
     };
     const newPosts = data.concat(post);
     setData(newPosts);
   }
+
+  async function fetchPosts() {
+    try {
+      const response = await axios.get("https://jsonplaceholder.typicode.com/posts")
+      setData(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  } 
+
+  
 
   if (!data) return <p>No POSTS fetched</p>
   return (
